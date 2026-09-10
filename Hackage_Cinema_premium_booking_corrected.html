@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HACKAGE CINEMA</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#050505;color:#fff}
+header{position:fixed;top:0;width:100%;z-index:1000;padding:18px 6%;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.92);border-bottom:1px solid #2d2410;backdrop-filter:blur(10px)}
+.logo{font-size:25px;font-weight:900;letter-spacing:3px;color:#d4af37}
+nav{display:flex;gap:25px}nav a{color:#ddd;text-decoration:none;font-size:14px;font-weight:bold}nav a:hover{color:#d4af37}
+.hero{min-height:100vh;padding:150px 7% 80px;display:flex;align-items:center;background:radial-gradient(circle at 80% 40%,#3b2b08 0%,transparent 35%),linear-gradient(120deg,#000,#080808,#161105)}
+.hero-content{max-width:850px}.small-title{color:#d4af37;letter-spacing:5px;font-size:14px;margin-bottom:20px}
+.hero h1{font-size:clamp(50px,9vw,110px);line-height:.9;letter-spacing:5px}.hero h1 span{color:#d4af37}
+.hero p{margin-top:25px;color:#bbb;max-width:650px;line-height:1.7}.hero-btn{display:inline-block;margin-top:30px;padding:14px 25px;background:#d4af37;color:#000;text-decoration:none;font-weight:900}
+section{padding:90px 7%}.section-title{font-size:40px;margin-bottom:35px}.section-title span{color:#d4af37}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:35px}.filter{border:1px solid #594b25;background:#0c0c0c;color:#ddd;padding:9px 17px;cursor:pointer}.filter.active,.filter:hover{background:#d4af37;color:#000}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:25px}.card{background:linear-gradient(145deg,#111,#080808);border:1px solid #2d2d2d;padding:25px;transition:.3s}.card:hover{transform:translateY(-6px);border-color:#d4af37}
+.poster{height:300px;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle,#493a10,#15120a 45%,#050505);border:1px solid #3b321c;margin-bottom:20px}.poster h2{font-size:35px;letter-spacing:3px;color:#d4af37}
+.meta{color:#888;font-size:13px;margin:8px 0}.card h3{font-size:23px}.card-btn{width:100%;padding:13px;margin-top:18px;border:0;background:#d4af37;color:#000;font-weight:900;cursor:pointer}.card-btn:hover{background:#fff}
+.upcoming{background:#090909}.raaz-box{border:1px solid #493b18;padding:35px;background:linear-gradient(120deg,rgba(212,175,55,.08),transparent)}.raaz-box h2{color:#d4af37;font-size:42px}.raaz-box p{color:#aaa;line-height:1.7;margin:15px 0}
+.info{display:flex;gap:20px;flex-wrap:wrap;margin:20px 0}.info div{border:1px solid #333;padding:12px 18px}
+.production-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}.production-box{padding:30px;background:#0c0c0c;border:1px solid #292929;cursor:pointer;transition:.3s}.production-box:hover{border-color:#d4af37;transform:translateY(-5px)}.production-box h3{color:#d4af37;margin-bottom:10px}.production-box p{color:#999}
+footer{padding:40px 7%;text-align:center;border-top:1px solid #222;color:#666}
+.modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:20px;overflow:hidden}.modal-box{width:100%;max-width:520px;max-height:88vh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#0d0d0d;border:1px solid #594b25;padding:30px;position:relative}.close{position:absolute;right:20px;top:15px;font-size:28px;cursor:pointer;color:#aaa}.close:hover{color:#d4af37}.modal-box h2{color:#d4af37;margin-bottom:20px}
+.modal-box input,.modal-box select{width:100%;padding:13px;margin:8px 0;background:#050505;color:#fff;border:1px solid #333}.free-note{margin:15px 0;padding:13px;text-align:center;background:#15130b;border:1px solid #5d4d20;color:#d4af37;font-weight:bold}.confirm{width:100%;padding:14px;margin-top:12px;border:0;background:#d4af37;color:#000;font-weight:900;cursor:pointer}.confirm:hover{background:#fff}
+.date-picker,.time-picker{position:relative;margin:8px 0}
+.custom-trigger{width:100%;padding:14px 16px;background:#050505;color:#aaa;border:1px solid #333;text-align:left;display:flex;align-items:center;justify-content:space-between;font-size:15px;cursor:pointer}
+.custom-trigger:hover,.custom-trigger.open{border-color:#d4af37;color:#fff}
+.custom-trigger .arrow{font-size:18px;transition:.2s}
+.custom-trigger.open .arrow{transform:rotate(180deg);color:#d4af37}
+.custom-menu{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:100;background:#101010;border:1px solid #594b25;box-shadow:0 18px 45px rgba(0,0,0,.65);padding:8px}
+.custom-menu.show{display:block}
+.date-head{display:flex;align-items:center;justify-content:space-between;padding:7px 5px 12px;color:#d4af37;font-weight:900}
+.date-head button{background:none;border:0;color:#aaa;font-size:22px;cursor:pointer;padding:2px 9px}
+.date-head button:hover{color:#d4af37}
+.calendar-week,.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.calendar-week span{text-align:center;color:#777;font-size:11px;padding:4px 0}
+.calendar-day{border:0;background:transparent;color:#ddd;padding:9px 0;border-radius:4px;cursor:pointer}
+.calendar-day:hover{background:#1b170b;color:#d4af37}
+.calendar-day.selected{background:#d4af37;color:#000;font-weight:900}
+.calendar-day.disabled{color:#444;cursor:default}
+.time-options{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.time-option{padding:13px 10px;background:#0a0a0a;border:1px solid #292929;color:#ddd;cursor:pointer;text-align:center}
+.time-option:hover,.time-option.selected{border-color:#d4af37;background:rgba(212,175,55,.12);color:#d4af37}
+.ticket-picker{position:relative;margin:8px 0}
+.ticket-trigger{width:100%;padding:14px 16px;background:#050505;color:#aaa;border:1px solid #333;text-align:left;display:flex;align-items:center;justify-content:space-between;font-size:15px;cursor:pointer}
+.ticket-trigger:hover,.ticket-trigger.open{border-color:#d4af37;color:#fff}
+.ticket-trigger .arrow{font-size:18px;transition:.2s}
+.ticket-trigger.open .arrow{transform:rotate(180deg);color:#d4af37}
+.ticket-menu{display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:110;max-height:240px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;background:#101010;border:1px solid #594b25;box-shadow:0 18px 45px rgba(0,0,0,.65);padding:6px}
+.ticket-menu.show{display:block}
+.ticket-option{width:100%;padding:13px 15px;background:transparent;color:#ddd;border:0;text-align:left;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:15px}
+.ticket-option:hover{background:#1b170b;color:#d4af37}
+.ticket-option.selected{background:rgba(212,175,55,.12);color:#d4af37}
+.ticket-option .check{opacity:0;font-weight:bold}
+.ticket-option.selected .check{opacity:1}
+@media(max-width:700px){.modal{padding:10px}.modal-box{max-height:88vh;padding:22px}.custom-menu,.ticket-menu{max-height:50vh}.ticket-menu{box-shadow:0 15px 35px rgba(0,0,0,.8)}.ticket-option{padding:14px 15px}.calendar-day{padding:10px 0}}
+.success{display:none;text-align:center}.success h2{font-size:30px;color:#d4af37}.success p{color:#bbb;margin-top:12px;line-height:1.6}
+@media(max-width:700px){header{padding:15px 5%}nav{gap:12px}nav a{font-size:11px}.hero{padding-left:6%;padding-right:6%}section{padding:70px 6%}.raaz-box h2{font-size:30px}}
+</style>
+</head>
+<body>
+<header><div class="logo">HACKAGE CINEMA</div><nav><a href="#home">HOME</a><a href="#now">NOW SHOWING</a><a href="#upcoming">UPCOMING</a><a href="#productions">PRODUCTIONS</a></nav></header>
+
+<section class="hero" id="home"><div class="hero-content"><div class="small-title">HACKAGE CINEMA • UJJAIN</div><h1>STORIES<br><span>BEYOND</span><br>THE SCREEN</h1><p>The official cinema portal bringing together movies and projects from Hackage Production, Team Ujjain and Divine Ujjain Production.</p><a href="#now" class="hero-btn">EXPLORE CINEMA</a></div></section>
+
+<section id="now"><h2 class="section-title">NOW <span>SHOWING</span></h2><div class="filters"><button class="filter active" onclick="filterProjects('all',this)">ALL</button><button class="filter" onclick="filterProjects('movie',this)">MOVIES</button><button class="filter" onclick="filterProjects('hackage',this)">HACKAGE</button><button class="filter" onclick="filterProjects('team',this)">TEAM UJJAIN</button><button class="filter" onclick="filterProjects('divine',this)">DIVINE UJJAIN</button></div><div class="grid" id="projectGrid"></div></section>
+
+<section class="upcoming" id="upcoming"><h2 class="section-title"><span>UPCOMING</span> PROJECTS</h2><div class="raaz-box"><div class="small-title">HACKAGE PRODUCTION PRESENTS</div><h2>RAAZ: THE REVENGE OF MURDER</h2><p>A Krishna Singh Chouhan Film</p><p>Har dar ke peeche sach chhupa hai...</p><div class="info"><div>📅 22 NOV 2026</div><div>⏰ 02:00 PM</div><div>🎬 U/A 13+</div><div>⏱ 1:50:00</div></div><button class="card-btn" onclick="openDetails()">VIEW DETAILS</button><button class="card-btn" onclick="openBooking()">🎟️ BOOK FREE TICKETS</button></div></section>
+
+<section id="productions"><h2 class="section-title">OUR <span>PRODUCTIONS</span></h2><div class="production-grid">
+<div class="production-box" onclick="openYouTube('https://www.youtube.com/@hackage_verse')"><h3>HACKAGE PRODUCTION</h3><p>Official YouTube Channel →</p></div>
+<div class="production-box" onclick="openYouTube('https://www.youtube.com/@teamujjain13')"><h3>TEAM UJJAIN</h3><p>Official YouTube Channel →</p></div>
+<div class="production-box" onclick="openYouTube('https://www.youtube.com/@divineujjain')"><h3>DIVINE UJJAIN PRODUCTION</h3><p>Official YouTube Channel →</p></div>
+</div></section>
+
+<footer>© 2026 HACKAGE CINEMA • HACKAGE PRODUCTION • TEAM UJJAIN • DIVINE UJJAIN PRODUCTION</footer>
+
+<div class="modal" id="detailsModal"><div class="modal-box"><span class="close" onclick="closeModal('detailsModal')">×</span><h2>RAAZ: THE REVENGE OF MURDER</h2><p style="color:#aaa;line-height:1.7;">A horror-mystery comedy set around an old haveli, hidden secrets and a mystery that refuses to stay buried.</p><br><p style="color:#d4af37;">HACKAGE PRODUCTION PRESENTS</p><p style="color:#aaa;margin-top:8px;">A Krishna Singh Chouhan Film</p><div class="info"><div>22 Nov 2026</div><div>02:00 PM</div><div>U/A 13+</div></div><button class="card-btn" onclick="closeModal('detailsModal');openBooking();">🎟️ BOOK FREE TICKETS</button></div></div>
+
+<div class="modal" id="bookingModal"><div class="modal-box"><span class="close" onclick="closeModal('bookingModal')">×</span><div id="bookingForm"><h2>🎟️ FREE TICKET BOOKING</h2><p style="color:#aaa;">RAAZ: THE REVENGE OF MURDER</p><div class="free-note">✨ ENTRY IS COMPLETELY FREE ✨<br>NO PAYMENT REQUIRED</div><input type="text" id="name" placeholder="Your Name"><input type="tel" id="mobile" placeholder="Mobile Number"><input type="text" id="city" placeholder="City Name"><label for="showDate" style="display:block;color:#aaa;margin-top:12px;">📅 SELECT DATE</label><div class="date-picker">
+<button type="button" class="custom-trigger" id="dateTrigger" onclick="toggleDatePicker()">
+<span id="dateLabel">22 November 2026</span><span class="arrow">⌄</span>
+</button>
+<div class="custom-menu" id="dateMenu">
+<div class="date-head"><button type="button" onclick="changeMonth(-1)">‹</button><span id="calendarTitle"></span><button type="button" onclick="changeMonth(1)">›</button></div>
+<div class="calendar-week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+<div class="calendar-grid" id="calendarGrid"></div>
+</div>
+<input type="hidden" id="showDate" value="2026-11-22">
+</div><label for="showTime" style="display:block;color:#aaa;margin-top:12px;">⏰ SELECT TIME</label><div class="time-picker">
+<button type="button" class="custom-trigger" id="timeTrigger" onclick="toggleTimePicker()">
+<span id="timeLabel">Select Time</span><span class="arrow">⌄</span>
+</button>
+<div class="custom-menu" id="timeMenu">
+<div class="time-options">
+<button type="button" class="time-option" onclick="selectTime('02:00 PM')">02:00 PM</button>
+<button type="button" class="time-option" onclick="selectTime('04:00 PM')">04:00 PM</button>
+<button type="button" class="time-option" onclick="selectTime('06:00 PM')">06:00 PM</button>
+</div>
+</div>
+<input type="hidden" id="showTime" value="">
+</div><div class="ticket-picker">
+<button type="button" class="ticket-trigger" id="ticketTrigger" onclick="toggleTicketMenu()">
+<span id="ticketLabel">Number of Tickets</span><span class="arrow">⌄</span>
+</button>
+<div class="ticket-menu" id="ticketMenu">
+<button type="button" class="ticket-option" data-value="1 Ticket" onclick="selectTickets('1 Ticket')"><span>1 Ticket</span><span class="check">✓</span></button>
+<button type="button" class="ticket-option" data-value="2 Tickets" onclick="selectTickets('2 Tickets')"><span>2 Tickets</span><span class="check">✓</span></button>
+<button type="button" class="ticket-option" data-value="3 Tickets" onclick="selectTickets('3 Tickets')"><span>3 Tickets</span><span class="check">✓</span></button>
+<button type="button" class="ticket-option" data-value="4 Tickets" onclick="selectTickets('4 Tickets')"><span>4 Tickets</span><span class="check">✓</span></button>
+<button type="button" class="ticket-option" data-value="5 Tickets" onclick="selectTickets('5 Tickets')"><span>5 Tickets</span><span class="check">✓</span></button>
+</div>
+<input type="hidden" id="tickets" value="">
+</div><button class="confirm" onclick="confirmBooking()">CONFIRM FREE BOOKING</button></div><div class="success" id="success"><h2>🎟️ BOOKING CONFIRMED!</h2><p>Your free ticket request has been recorded.</p><p><b>RAAZ: THE REVENGE OF MURDER</b><br><span id="confirmedDate"></span> • <span id="confirmedTime"></span></p><div class="free-note">NO PAYMENT REQUIRED</div><button class="confirm" onclick="closeModal('bookingModal')">CLOSE</button></div></div></div>
+
+<script>
+const projects=[
+{title:"Ujjain 0KM – Chapter 1",production:"Team Ujjain",category:"team",youtube:"https://www.youtube.com/watch?v=vij-VZVdUSc"},
+{title:"Ujjain 0KM – Chapter 2",production:"Team Ujjain",category:"team",youtube:"https://www.youtube.com/watch?v=-ss92cjYa4U"},
+{title:"5 Idiot – Chapter 1",production:"Divine Ujjain Production",category:"divine",youtube:"https://www.youtube.com/watch?v=-CM0A5z7Fsg"}];
+
+function renderProjects(list){const grid=document.getElementById("projectGrid");grid.innerHTML="";list.forEach(project=>{grid.innerHTML+=`<div class="card"><div class="poster"><h2>${project.title}</h2></div><h3>${project.title}</h3><div class="meta">${project.production}</div><button class="card-btn" onclick="openYouTube('${project.youtube}')">▶ WATCH NOW</button></div>`})}
+function filterProjects(type,button){document.querySelectorAll(".filter").forEach(btn=>btn.classList.remove("active"));button.classList.add("active");renderProjects(type==="all"?projects:projects.filter(project=>project.category===type))}
+function openYouTube(link){window.location.href=link}
+function openDetails(){document.getElementById("detailsModal").style.display="flex"}
+function openBooking(){document.getElementById("bookingModal").style.display="flex";document.getElementById("bookingForm").style.display="block";document.getElementById("success").style.display="none"}
+function closeModal(id){document.getElementById(id).style.display="none"}
+let calendarMonth=10, calendarYear=2026;
+
+function toggleDatePicker(){
+const menu=document.getElementById("dateMenu"), trigger=document.getElementById("dateTrigger");
+document.getElementById("timeMenu").classList.remove("show");
+document.getElementById("timeTrigger").classList.remove("open");
+menu.classList.toggle("show"); trigger.classList.toggle("open");
+renderCalendar();
+}
+function changeMonth(delta){
+const next=new Date(calendarYear,calendarMonth+delta,1);
+if(next<new Date(2026,10,1)||next>new Date(2026,11,1)) return;
+calendarMonth=next.getMonth(); calendarYear=next.getFullYear(); renderCalendar();
+}
+function renderCalendar(){
+const title=document.getElementById("calendarTitle");
+const grid=document.getElementById("calendarGrid");
+title.textContent=new Date(calendarYear,calendarMonth,1).toLocaleDateString("en-IN",{month:"long",year:"numeric"});
+grid.innerHTML="";
+const firstDay=new Date(calendarYear,calendarMonth,1).getDay();
+const days=new Date(calendarYear,calendarMonth+1,0).getDate();
+for(let i=0;i<firstDay;i++){grid.innerHTML+="<span></span>"}
+for(let d=1;d<=days;d++){
+const date=new Date(calendarYear,calendarMonth,d);
+const iso=date.toISOString().slice(0,10);
+const allowed=iso>="2026-11-22"&&iso<="2026-12-22";
+const selected=document.getElementById("showDate").value===iso;
+grid.innerHTML+=`<button type="button" class="calendar-day ${selected?"selected ":""}${allowed?"":"disabled"}" ${allowed?`onclick="selectDate('${iso}')"`:"disabled"}>${d}</button>`;
+}
+}
+function selectDate(iso){
+const date=new Date(iso+"T00:00:00");
+document.getElementById("showDate").value=iso;
+document.getElementById("dateLabel").textContent=date.toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+document.getElementById("dateMenu").classList.remove("show");
+document.getElementById("dateTrigger").classList.remove("open");
+renderCalendar();
+}
+function toggleTimePicker(){
+const menu=document.getElementById("timeMenu"), trigger=document.getElementById("timeTrigger");
+document.getElementById("dateMenu").classList.remove("show");
+document.getElementById("dateTrigger").classList.remove("open");
+menu.classList.toggle("show"); trigger.classList.toggle("open");
+}
+function selectTime(value){
+document.getElementById("showTime").value=value;
+document.getElementById("timeLabel").textContent=value;
+document.querySelectorAll(".time-option").forEach(option=>option.classList.toggle("selected",option.textContent===value));
+document.getElementById("timeMenu").classList.remove("show");
+document.getElementById("timeTrigger").classList.remove("open");
+}
+
+function toggleTicketMenu(){
+const menu=document.getElementById("ticketMenu");
+const trigger=document.getElementById("ticketTrigger");
+menu.classList.toggle("show");
+trigger.classList.toggle("open");
+}
+function selectTickets(value){
+document.getElementById("tickets").value=value;
+document.getElementById("ticketLabel").textContent=value;
+document.querySelectorAll(".ticket-option").forEach(option=>{
+option.classList.toggle("selected",option.dataset.value===value);
+});
+document.getElementById("ticketMenu").classList.remove("show");
+document.getElementById("ticketTrigger").classList.remove("open");
+}
+document.addEventListener("click",function(e){
+const picker=document.querySelector(".ticket-picker");
+const datePicker=document.querySelector(".date-picker");
+const timePicker=document.querySelector(".time-picker");
+if(picker && !picker.contains(e.target)){
+document.getElementById("ticketMenu").classList.remove("show");
+document.getElementById("ticketTrigger").classList.remove("open");
+}
+if(datePicker && !datePicker.contains(e.target)){
+document.getElementById("dateMenu").classList.remove("show");
+document.getElementById("dateTrigger").classList.remove("open");
+}
+if(timePicker && !timePicker.contains(e.target)){
+document.getElementById("timeMenu").classList.remove("show");
+document.getElementById("timeTrigger").classList.remove("open");
+}
+});
+renderCalendar();
+function confirmBooking(){const name=document.getElementById("name").value.trim();const mobile=document.getElementById("mobile").value.trim();const city=document.getElementById("city").value.trim();const showDate=document.getElementById("showDate").value;const showTime=document.getElementById("showTime").value;const tickets=document.getElementById("tickets").value;if(!name||!mobile||!city||!showDate||!showTime||!tickets){alert("Please fill all details.");return}const selectedDate=new Date(showDate+"T00:00:00").toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});document.getElementById("confirmedDate").textContent=selectedDate;document.getElementById("confirmedTime").textContent=showTime;document.getElementById("bookingForm").style.display="none";document.getElementById("success").style.display="block"}
+renderProjects(projects);
+</script>
+</body>
+</html>
